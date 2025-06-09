@@ -27,19 +27,14 @@ fs.readFile('InputEx1', 'utf8', (err, data) => {
     }
   });
 
-
-
   pontoA.sort(); // ordena em ordem alfabética
   pontoB.sort(); // ordena em ordem alfabética ou numérica como string
   
   pontoA.forEach((valor, idx) => {
     distancia = distancia + Math.abs(pontoB[idx] - valor); //Ponto B - Ponto A = distância
-    //console.log(Math.abs(pontoB[idx] - valor));
     
   });
 
-  //console.log('Ponto A:', pontoA);
-  //console.log('Ponto B:', pontoB);
   console.log('distancia: ', distancia);
 
 });

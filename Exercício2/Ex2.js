@@ -22,7 +22,7 @@ fs.readFile('InputEx2', 'utf8', (err, data) => {
       for (let i = 1; i < vetor.length; i++) {
         const diff = vetor[i] - vetor[i - 1];
 
-        if (diff === 0 || Math.abs(diff) < 1 || Math.abs(diff) > 3) {
+        if (diff === 0 || Math.abs(diff) > 3) {
           return false;
         }
 
@@ -48,6 +48,7 @@ fs.readFile('InputEx2', 'utf8', (err, data) => {
         const copia = [...vetorOriginal];
         copia.splice(i, 1); //remove o elemento na posição i
 
+        // Verifica se a cópia do vetor é segura
         if (ehSeguro(copia)) {
           ficouSeguro = true;
           break;
@@ -63,11 +64,6 @@ fs.readFile('InputEx2', 'utf8', (err, data) => {
     }
   });
 
-
   console.log('Relatórios Seguros:');
   console.log(relatoriosSeguros);
-//   console.log('matriz:');
-//   matriz.forEach((valor, idx) => {
-//     console.log(`Linha ${idx + 1}: ${valor}`);
-//   });
 });
