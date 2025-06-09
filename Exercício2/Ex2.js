@@ -12,51 +12,62 @@ fs.readFile('InputEx2', 'utf8', (err, data) => {
 
   const linhas = data.trim().split('\n');
 
-  linhas.forEach(linha => {
-    
-    const vetor = linha.trim().split(' ').map(Number);
-    let direcao = null; 
-    let seguro = true;
+  linhas.forEach((linha, idx) => {
+    const vetorOriginal = linha.trim().split(' ').map(Number);
 
-    for (let i = 1; i < vetor.length; i++) {
-      
-      const atual = vetor[i];
-      const anterior = vetor[i - 1];
-      const diferença = atual - anterior;
+    // Função que verifica se um vetor é seguro
+    const ehSeguro = (vetor) => {
+      let direcao = null;
 
-      //Verifica se o numero se repete
-      if (diferença === 0) {
-        seguro = false;
-        break;
+      for (let i = 1; i < vetor.length; i++) {
+        const diff = vetor[i] - vetor[i - 1];
+
+        if (diff === 0 || Math.abs(diff) < 1 || Math.abs(diff) > 3) {
+          return false;
+        }
+
+        if (direcao === null) {
+          direcao = diff > 0 ? 'aumenta' : 'diminui';
+        } else if ((direcao === 'aumenta' && diff < 0) || (direcao === 'diminui' && diff > 0)) {
+          return false;
+        }
       }
 
-      //Verifica se a diferença está entre 1 e 3
-      if (Math.abs(diferença) < 1 || Math.abs(diferença) > 3) {
-        seguro = false;
-        break;
-      }
+      return true;
+    };
 
-      //Primeira instância de direção
-      if (direcao === null) {
-        //se a diferença for positiva, o numero é crescente
-        direcao = diferença > 0 ? 'aumenta' : 'diminui';
-      //se houver mudança de direção, não é seguro
-      } else if ((direcao === 'aumenta' && diferença < 0) || (direcao === 'diminui' && diferença > 0)) {
-        seguro = false;
-        break;
-      }
-
-    }
-    
-    if (seguro) {
+    // Verifica se o vetor original já é seguro
+    if (ehSeguro(vetorOriginal)) {
       matriz.push("Seguro");
       relatoriosSeguros++;
     } else {
-      matriz.push("Inseguro");
-    }
+      // Tenta remover um único nível e verificar se fica seguro
+      let ficouSeguro = false;
 
+      for (let i = 0; i < vetorOriginal.length; i++) {
+        const copia = [...vetorOriginal];
+        copia.splice(i, 1); // remove o elemento na posição i
+
+        if (ehSeguro(copia)) {
+          ficouSeguro = true;
+          break;
+        }
+      }
+
+      if (ficouSeguro) {
+        matriz.push("Seguro");
+        relatoriosSeguros++;
+      } else {
+        matriz.push("Inseguro");
+      }
+    }
   });
+
 
   console.log('Relatórios Seguros:');
   console.log(relatoriosSeguros);
+//   console.log('matriz:');
+//   matriz.forEach((valor, idx) => {
+//     console.log(`Linha ${idx + 1}: ${valor}`);
+//   });
 });
