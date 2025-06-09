@@ -36,17 +36,17 @@ fs.readFile('InputEx2', 'utf8', (err, data) => {
       return true;
     };
 
-    // Verifica se o vetor original já é seguro
+    //Verifica se o vetor original já é seguro
     if (ehSeguro(vetorOriginal)) {
       matriz.push("Seguro");
       relatoriosSeguros++;
     } else {
-      // Tenta remover um único nível e verificar se fica seguro
+      //Tenta remover um único nível e verificar se fica seguro
       let ficouSeguro = false;
 
       for (let i = 0; i < vetorOriginal.length; i++) {
         const copia = [...vetorOriginal];
-        copia.splice(i, 1); // remove o elemento na posição i
+        copia.splice(i, 1); //remove o elemento na posição i
 
         if (ehSeguro(copia)) {
           ficouSeguro = true;
