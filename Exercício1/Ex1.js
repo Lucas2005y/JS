@@ -5,6 +5,7 @@ const pontoA = [];
 const pontoB = [];
 //const distancia = [];
 let distancia = 0;
+let sumMatches = 0;
 
 //Lê o conteúdo do arquivo
 fs.readFile('InputEx1', 'utf8', (err, data) => {
@@ -32,9 +33,14 @@ fs.readFile('InputEx1', 'utf8', (err, data) => {
   
   pontoA.forEach((valor, idx) => {
     distancia = distancia + Math.abs(pontoB[idx] - valor); //Ponto B - Ponto A = distância
+    //ocorrencias de um valor no ponto B
+    const matches = pontoB.filter(elemento => elemento === valor);
+    //multiplica pelo valor encontado
+    sumMatches += valor * matches.length;
     
   });
 
   console.log('distancia: ', distancia);
+  console.log('sumMatches: ', sumMatches);
 
 });
