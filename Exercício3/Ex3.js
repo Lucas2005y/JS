@@ -8,23 +8,34 @@ fs.readFile('InputEx3', 'utf8', (err, data) => {
   }
   data = data.replace(/\s+/g, '');
 
-  //Expressão regular para capturar apenas chamadas válidas de mul(n1,n2)
-  const regex = /mul\((\d+),(\d+)\)/g;
-  let sum;
-  const resultados = [];
-  //Aplica o regex ao conteúdo do vetor e atribui na constante
-  const matches = [...data.matchAll(regex)];
+  //Expressão regular para capturar apenas mul(n1,n2)
+  const regex = /(mul\(\d{1,3},\d{1,3}\))|(do\(\))|(don't\(\))/g;
+  let sum = 0;
+  let doMul = true;
 
-  matches.forEach(match => {
-    //Extrai os números e calcula a multiplicação
-    const n1 = Number(match[1]);
-    const n2 = Number(match[2]);
-    const mul = n1 * n2;
-    //Acumula o resultado
-    sum = (sum || 0) + mul; 
-    resultados.push([n1, n2]);
-  });
+  let match;
+  //Percorrer a string, encontrando cada trecho em ordem
+  while ((match = regex.exec(data)) !== null) {
+    //String completa
+    const entrada = match[0]; 
 
-  console.log(resultados); 
+    if (entrada.startsWith('do(')) {
+      doMul = true;
+    } else if (entrada.startsWith("don't(")) {
+      doMul = false;
+    } else if (entrada.startsWith('mul(')) {
+      // Se for uma instrução mul, verifica se está habilitada
+      if (doMul) {
+        // Regex para extrair os números de dentro do mul(X,Y)
+        const numbersMatch = entrada.match(/\d{1,3}/g);
+        if (numbersMatch && numbersMatch.length === 2) {
+          const num1 = Number(numbersMatch[0], 10);
+          const num2 = Number(numbersMatch[1], 10);
+          sum += num1 * num2;
+        }
+      }
+    }
+  }
+
   console.log('Soma dos produtos:', sum);
 });
