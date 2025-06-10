@@ -22,7 +22,7 @@ fs.readFile('InputEx2', 'utf8', (err, data) => {
       for (let i = 1; i < vetor.length; i++) {
         const diff = vetor[i] - vetor[i - 1];
 
-        if (diff === 0 || Math.abs(diff) > 3) {
+        if (diff === 0 || Math.abs(diff) > 3|| Math.abs(diff) < 1 ) {
           return false;
         }
 

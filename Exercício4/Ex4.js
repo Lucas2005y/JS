@@ -1,43 +1,77 @@
 const fs = require('fs');
 
-//Lê o conteúdo do arquivo
-fs.readFile('InputEx3', 'utf8', (err, data) => {
-  if (err) {
-    console.error('Erro ao ler o arquivo:', err);
-    return;
-  }
-  data = data.replace(/\s+/g, '');
+//Função principal para encontrar a palavra no caça-palavras
+function findWord(grid, word) {
+    const rows = grid.length;
+    const cols = grid[0].length;
+    const wordLength = word.length;
+    let count = 0;
 
-  //Expressão regular para capturar apenas mul(n1,n2)
-  const regex = /(mul\(\d{1,3},\d{1,3}\))|(do\(\))|(don't\(\))/g;
-  let sum = 0;
-  let doMul = true;
+    //Todas as 8 direções possíveis (horizontal, vertical, diagonais, e suas inversões)
+    const directions = [
+        [0, 1],   //Horizontal para direita
+        [0, -1],  //Horizontal para esquerda
+        [1, 0],   //Vertical para baixo
+        [-1, 0],  //Vertical para cima
+        [1, 1],   //Diagonal para baixo e direita
+        [1, -1],  //Diagonal para baixo e esquerda
+        [-1, 1],  //Diagonal para cima e direita
+        [-1, -1]  //Diagonal \para cima e esquerda
+    ];
 
-  let match;
-  //Percorrer a string, encontrando cada trecho em ordem
-  while ((match = regex.exec(data)) !== null) {
-    //String completa
-    const entrada = match[0]; 
+    //Itera por cada célula da grade
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            //Se a letra atual for o início da palavra (X), verifica em todas as direções
+            //r = linha atual, c = coluna atual
+            if (grid[r][c] === word[0]) {
+                //Para verificar todas direções da lista Directions
+                //move o código para todas direções possíveis
+                for (const [dr, dc] of directions) {
+                    let k;
+                    let currentWord = '';
+                    //Tenta construir a palavra em uma direção por vez
+                    //wordLength é o tamanho da palavra XMAS, porém tem que ser decrescido de 1
+                    for (k = 0; k < wordLength; k++) {
+                        //Novas direções construídas
+                        const newR = r + k * dr;
+                        const newC = c + k * dc;
 
-    //Verifica se é do ou don't para habilitar ou desabilitar a multiplicação
-    if (entrada.startsWith('do(')) {
-      doMul = true;
-    } else if (entrada.startsWith("don't(")) {
-      doMul = false;
-    } else if (entrada.startsWith('mul(')) {
-      //Se for uma instrução mul, verifica se está habilitada
-      if (doMul) {
-        //Regex para extrair os números de dentro do mul(X,Y)
-        const numbersMatch = entrada.match(/\d{1,3}/g);
-        if (numbersMatch && numbersMatch.length === 2) {
-          //Converte os números para inteiros e calcula o produto
-          const num1 = Number(numbersMatch[0], 10);
-          const num2 = Number(numbersMatch[1], 10);
-          sum += num1 * num2;
+                        //Verifica se está dentro dos limites da grade
+                        //Se newR e newC estiverem fora, significa que a palavra...
+                        //...não pode ser formada completamente nessa direção a partir desse ponto
+                        if (newR >= 0 && newR < rows && newC >= 0 && newC < cols) {
+                          //Se a célula estiver dentro dos limites, a letra é adicionada à currentWord
+                            currentWord += grid[newR][newC];
+                        } else {
+                            //Sai do loop se estiver fora dos limites
+                            break;
+                        }
+                    }
+
+                    //Se a palavra construída for igual à palavra procurada
+                    if (currentWord === word) {
+                        count++;
+                    }
+                }
+            }
         }
-      }
     }
-  }
+    return count;
+}
 
-  console.log('Soma dos produtos:', sum);
+//Lê o conteúdo do arquivo
+fs.readFile('InputEx4', 'utf8', (err, data) => {
+    if (err) {
+        console.error('Erro ao ler o arquivo:', err);
+        return;
+    }
+
+    //Remove espaços em branco e divide em linhas para criar a grade
+    const grid = data.trim().split('\n').map(row => row.replace(/\s+/g, '').split(''));
+
+    const wordInput = 'XMAS';
+    const output = findWord(grid, wordInput);
+
+    console.log(`A palavra "${wordInput}" ocorre ${output} vezes.`);
 });
